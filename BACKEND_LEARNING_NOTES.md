@@ -1,6 +1,33 @@
 # Mini Blog API Learning Notes
 
+## Menu học tập
+
+| Bài | Nội dung | Trạng thái |
+| --- | --- | --- |
+| [Bài 1](#bai-1) | NestJS Project Basics | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 2](#bai-2) | Docker PostgreSQL và Redis | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 3](#bai-3) | Prisma ORM | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 4](#bai-4) | PrismaService và UsersModule | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 5](#bai-5) | Auth Register/Login với JWT | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 6](#bai-6) | Posts CRUD và Protected Routes | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 7](#bai-7) | Redis Cache cho GET /posts | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 8](#bai-8) | BullMQ Queue và Worker | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 9](#bai-9) | Environment Config và App Configuration | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 10](#bai-10) | Error Handling và Response Shape | Chưa học |
+| [Bài 11](#bai-11) | API Testing bằng Postman hoặc cURL | Chưa học |
+| [Bài 12](#bai-12) | README Production-Style | Chưa học |
+| [Bài 13](#bai-13) | Refactor nhẹ cho sạch code | Chưa học |
+| [Bài 14](#bai-14) | Basic Automated Tests | Chưa học |
+| [Bài 15](#bai-15) | Database Seeding | Chưa học |
+| [Bài 16](#bai-16) | Pagination nâng cao và Query Options | Chưa học |
+| [Bài 17](#bai-17) | Cache nâng cao | Chưa học |
+| [Bài 18](#bai-18) | Queue nâng cao | Chưa học |
+| [Bài 19](#bai-19) | Security cơ bản | Chưa học |
+| [Bài 20](#bai-20) | Production Thinking | Chưa học |
+
 Ghi chú này tổng hợp các bài học đã đi qua khi xây Mini Blog API bằng NestJS, PostgreSQL, Prisma, Redis và JWT. Mục tiêu là giúp bạn xem lại "vì sao làm như vậy", không chỉ copy code.
+
+<a id="bai-1"></a>
 
 ## Bài 1: NestJS Project Basics
 
@@ -50,6 +77,8 @@ Controller nhận request.
 Service xử lý logic.
 Module gom controller/service lại và quản lý dependency.
 ```
+
+<a id="bai-2"></a>
 
 ## Bài 2: Docker PostgreSQL và Redis
 
@@ -116,6 +145,8 @@ open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specifie
 ```
 
 nghĩa là Docker Desktop/Docker Engine chưa chạy.
+
+<a id="bai-3"></a>
 
 ## Bài 3: Prisma ORM
 
@@ -217,6 +248,8 @@ schema.prisma
 -> NestJS services
 ```
 
+<a id="bai-4"></a>
+
 ## Bài 4: PrismaService và UsersModule
 
 ### Mục tiêu
@@ -289,6 +322,8 @@ model Post -> prisma.post
 ```
 
 `@@map("users")` chỉ đổi tên table trong database, không đổi tên property trong code.
+
+<a id="bai-5"></a>
 
 ## Bài 5: Auth Register/Login với JWT
 
@@ -378,6 +413,8 @@ Dùng trên route cần đăng nhập:
 ```ts
 @UseGuards(JwtAuthGuard)
 ```
+
+<a id="bai-6"></a>
 
 ## Bài 6: Posts CRUD và Protected Routes
 
@@ -517,6 +554,8 @@ Sai thường gặp:
 
 trong khi route là `:id`.
 
+<a id="bai-7"></a>
+
 ## Bài 7: Redis Cache cho GET /posts
 
 ### Mục tiêu
@@ -614,6 +653,8 @@ GET /posts
 -> set Redis TTL 60s
 -> return result
 ```
+
+<a id="bai-8"></a>
 
 ## Bài 8: BullMQ Queue và Worker
 
@@ -926,6 +967,524 @@ Sau này khi gửi email thật, dòng đó sẽ được thay bằng:
 await this.mailService.sendPostCreatedEmail(job.data.postId);
 ```
 
+<a id="bai-9"></a>
+
+## Bài 9: Environment Config và App Configuration
+
+### Mục tiêu
+
+- Gom các biến môi trường quan trọng vào `.env.example`.
+- Hiểu app không nên hard-code database URL, Redis host, JWT secret.
+- Dùng `ConfigModule` và `ConfigService` nhất quán hơn.
+
+### Các biến môi trường cần có
+
+```env
+PORT=4000
+
+DATABASE_URL="postgresql://mini_blog:mini_blog_password@localhost:5432/mini_blog_db?schema=public"
+
+JWT_SECRET="change-me-in-production"
+JWT_EXPIRES_IN="1d"
+
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+
+POSTS_CACHE_TTL_SECONDS=60
+```
+
+### Vì sao cần `.env.example`?
+
+`.env` thường chứa secret thật, không nên commit trong project production.
+
+`.env.example` là file mẫu để người khác biết cần cấu hình gì.
+
+```txt
+.env         -> giá trị thật trên máy/local/server
+.env.example -> template để document config
+```
+
+### Điều cần học
+
+- `process.env` là cách Node.js đọc environment variables.
+- `ConfigModule.forRoot({ isGlobal: true })` giúp NestJS load `.env`.
+- `ConfigService.getOrThrow()` giúp app fail sớm nếu thiếu config quan trọng.
+
+### Đã làm trong project
+
+- Thêm `validateEnv` để validate config lúc app khởi động.
+- `PORT`, `REDIS_PORT`, `POSTS_CACHE_TTL_SECONDS` được parse thành number.
+- `PrismaService` lấy `DATABASE_URL` qua `ConfigService`.
+- `QueueModule` và `CacheService` lấy Redis config qua `ConfigService`.
+- `PostsService` lấy TTL cache từ `POSTS_CACHE_TTL_SECONDS`.
+- `main.ts` lấy port từ `ConfigService`.
+- README có hướng dẫn copy `.env.example` thành `.env`.
+
+### Tiêu chí hoàn thành
+
+- Có `.env.example` đầy đủ.
+- README giải thích cách copy `.env.example` thành `.env`.
+- App chạy được khi chỉ cần đổi config trong `.env`.
+
+<a id="bai-10"></a>
+
+## Bài 10: Error Handling và Response Shape
+
+### Mục tiêu
+
+- Hiểu NestJS built-in exceptions.
+- Biết khi nào trả `400`, `401`, `403`, `404`, `409`, `500`.
+- Làm API trả lỗi có ý nghĩa cho client.
+
+### Các exception đã dùng
+
+```ts
+throw new UnauthorizedException('Invalid credentials');
+throw new ForbiddenException('You can only update your own posts');
+throw new NotFoundException('Post not found');
+throw new ConflictException('Email already exists');
+```
+
+### Ý nghĩa status code
+
+```txt
+400 Bad Request   -> body/query sai validation
+401 Unauthorized  -> chưa đăng nhập hoặc token sai
+403 Forbidden     -> có đăng nhập nhưng không có quyền
+404 Not Found     -> không tìm thấy resource
+409 Conflict      -> dữ liệu xung đột, ví dụ email đã tồn tại
+500 Server Error  -> lỗi server chưa xử lý đúng
+```
+
+### Lỗi nên tránh
+
+Nếu post không tồn tại, không nên trả 500.
+
+Đúng:
+
+```ts
+if (!post) {
+  throw new NotFoundException('Post not found');
+}
+```
+
+### Tiêu chí hoàn thành
+
+- Register email trùng trả `409`.
+- Login sai trả `401`.
+- Update/delete post của người khác trả `403`.
+- Get post không tồn tại trả `404`.
+- Validation body sai trả `400`.
+
+<a id="bai-11"></a>
+
+## Bài 11: API Testing bằng Postman hoặc cURL
+
+### Mục tiêu
+
+- Test toàn bộ flow auth và posts bằng tay.
+- Hiểu cách dùng JWT trong header.
+- Biết debug khi API trả lỗi.
+
+### Flow test chính
+
+```txt
+1. Register user
+2. Login lấy accessToken
+3. Create post bằng Bearer token
+4. Get posts
+5. Get one post
+6. Update post
+7. Delete post
+8. Test quyền với user khác
+```
+
+### Header JWT
+
+```http
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+
+### Test validation
+
+Thử tạo post với title quá ngắn:
+
+```json
+{
+  "title": "Hi",
+  "content": "This is valid content."
+}
+```
+
+Kỳ vọng: API trả `400`.
+
+### Test quyền
+
+```txt
+User A tạo post.
+User B login.
+User B update/delete post của User A.
+```
+
+Kỳ vọng: API trả `403`.
+
+### Tiêu chí hoàn thành
+
+- Có thể demo toàn bộ flow bằng Postman/cURL.
+- Hiểu nhìn lỗi ở client và log ở terminal NestJS.
+
+<a id="bai-12"></a>
+
+## Bài 12: README Production-Style
+
+### Mục tiêu
+
+- Viết README để người khác clone project và chạy được.
+- Document tech stack, setup, env, migration, API.
+
+### README nên có
+
+```txt
+1. Project overview
+2. Tech stack
+3. Folder structure
+4. Environment variables
+5. Run with Docker
+6. Install dependencies
+7. Prisma migrate/generate
+8. Start dev server
+9. API examples
+10. Learning notes
+```
+
+### Ví dụ run flow
+
+```bash
+docker compose up -d
+yarn install
+yarn prisma migrate dev
+yarn prisma generate
+yarn start:dev
+```
+
+Nếu PowerShell chặn `yarn.ps1`, ghi thêm:
+
+```powershell
+.\node_modules\.bin\nest.cmd build
+```
+
+### Tiêu chí hoàn thành
+
+- Người khác đọc README có thể chạy project từ đầu.
+- README không chỉ ghi lệnh, mà còn giải thích ngắn chức năng chính.
+
+<a id="bai-13"></a>
+
+## Bài 13: Refactor Nhẹ Cho Sạch Code
+
+### Mục tiêu
+
+- Sửa typo và style.
+- Giảm lặp code vừa đủ.
+- Giữ project đơn giản, không over-engineer.
+
+### Các điểm nên sửa
+
+Ví dụ:
+
+```ts
+hashedPasswprd -> hashedPassword
+exitedUser -> existingUser
+```
+
+Nên dùng `import type` với type-only imports:
+
+```ts
+import type { AuthUser } from '../auth/strategies/jwt.strategy';
+```
+
+### Không nên refactor quá sớm
+
+Ở giai đoạn học, ưu tiên hiểu flow:
+
+```txt
+Controller -> Service -> Prisma/Redis/Queue
+```
+
+Chỉ tách abstraction khi code thật sự lặp hoặc khó đọc.
+
+### Tiêu chí hoàn thành
+
+- Build pass.
+- Code dễ đọc hơn.
+- Không đổi behavior API.
+
+<a id="bai-14"></a>
+
+## Bài 14: Basic Automated Tests
+
+### Mục tiêu
+
+- Hiểu khác nhau giữa unit test và e2e test.
+- Viết test nhỏ cho service hoặc controller.
+- Biết test không thay thế manual testing, mà bổ sung an toàn.
+
+### Unit test là gì?
+
+Test một phần nhỏ, ví dụ `AuthService.login`.
+
+```txt
+Input: email/password sai
+Expected: UnauthorizedException
+```
+
+### E2E test là gì?
+
+Test gần giống người dùng thật gọi API:
+
+```txt
+POST /auth/register
+POST /auth/login
+POST /posts
+GET /posts
+```
+
+### Với project này nên học gì trước?
+
+Nên học e2e flow trước vì dễ hiểu với backend beginner.
+
+Sau đó mới học mock service/unit test.
+
+### Tiêu chí hoàn thành
+
+- Có ít nhất test kiểm tra `/health`.
+- Có ít nhất test auth happy path hoặc posts happy path.
+- Hiểu khi nào test cần database test riêng.
+
+<a id="bai-15"></a>
+
+## Bài 15: Database Seeding
+
+### Mục tiêu
+
+- Tạo dữ liệu mẫu cho database.
+- Không phải register/create post thủ công mỗi lần reset DB.
+
+### Seed dùng để làm gì?
+
+```txt
+Tạo user demo.
+Tạo vài post demo.
+Giúp test API nhanh hơn.
+```
+
+### Ý tưởng file seed
+
+```txt
+prisma/seed.ts
+```
+
+Seed sẽ:
+
+```txt
+1. Hash password demo
+2. Upsert user demo
+3. Tạo posts demo
+```
+
+### Tiêu chí hoàn thành
+
+- Chạy một lệnh seed có dữ liệu mẫu.
+- Login được bằng user demo.
+- `GET /posts` có dữ liệu ngay.
+
+<a id="bai-16"></a>
+
+## Bài 16: Pagination Nâng Cao và Query Options
+
+### Mục tiêu
+
+- Hiểu pagination hiện tại là offset pagination.
+- Thêm search/sort cơ bản nếu muốn.
+- Biết tradeoff giữa offset và cursor pagination.
+
+### Offset pagination hiện tại
+
+```ts
+const skip = (page - 1) * limit;
+```
+
+Dễ hiểu, phù hợp project nhỏ.
+
+### Khi nào cần cursor pagination?
+
+Khi dữ liệu rất lớn hoặc feed thay đổi liên tục.
+
+Ví dụ:
+
+```txt
+GET /posts?cursor=postId&limit=10
+```
+
+### Tiêu chí hoàn thành
+
+- Hiểu page/limit hoạt động.
+- Biết vì sao `limit` nên có `@Max(100)`.
+- Nếu thêm search/sort, query vẫn được validate bằng DTO.
+
+<a id="bai-17"></a>
+
+## Bài 17: Cache Nâng Cao
+
+### Mục tiêu
+
+- Hiểu thêm cache detail post.
+- Hiểu cache invalidation khó ở đâu.
+- Biết khi nào không nên cache.
+
+### Có nên cache `GET /posts/:id` không?
+
+Có thể, nhưng chưa bắt buộc.
+
+Cache detail hữu ích khi:
+
+```txt
+Post rất hot.
+Detail query có nhiều relation.
+Response ít thay đổi.
+```
+
+Cache detail key:
+
+```ts
+posts:detail:${id}
+```
+
+Invalidate khi update/delete:
+
+```ts
+await this.cacheService.del(`posts:detail:${id}`);
+await this.cacheService.delByPattern('posts:list:*');
+```
+
+### Tiêu chí hoàn thành
+
+- Hiểu vì sao list posts được cache trước.
+- Biết cache càng nhiều thì invalidate càng phải cẩn thận.
+
+<a id="bai-18"></a>
+
+## Bài 18: Queue Nâng Cao
+
+### Mục tiêu
+
+- Hiểu retry, delay, attempts.
+- Biết job thất bại thì xử lý thế nào.
+
+### Add job với options
+
+```ts
+await this.postsQueue.add(
+  SEND_EMAIL_JOB,
+  { postId },
+  {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 1000,
+    },
+  },
+);
+```
+
+Ý nghĩa:
+
+```txt
+Nếu job fail, thử lại tối đa 3 lần.
+Mỗi lần retry chờ lâu hơn lần trước.
+```
+
+### Tiêu chí hoàn thành
+
+- Hiểu retry job khác gì retry request.
+- Biết log lỗi trong worker.
+- Biết vì sao job nên idempotent.
+
+<a id="bai-19"></a>
+
+## Bài 19: Security Cơ Bản
+
+### Mục tiêu
+
+- Hiểu các lớp bảo vệ cơ bản của API.
+- Biết password hash không phải encryption.
+- Biết không expose secret/password.
+
+### Checklist security
+
+```txt
+Hash password bằng bcrypt.
+Không trả password trong response.
+JWT secret không hard-code.
+Protected routes dùng guard.
+User chỉ sửa/xóa post của chính mình.
+ValidationPipe bật whitelist.
+```
+
+### Các phần có thể học thêm
+
+- Rate limiting.
+- CORS.
+- Helmet.
+- Refresh token.
+- Role-based access control.
+
+### Tiêu chí hoàn thành
+
+- Hiểu khác nhau giữa authentication và authorization.
+- Hiểu vì sao `authorId` lấy từ JWT, không lấy từ body client.
+
+<a id="bai-20"></a>
+
+## Bài 20: Production Thinking
+
+### Mục tiêu
+
+- Nhìn project như một backend production-lite.
+- Hiểu app cần quan sát, cấu hình, deploy và rollback.
+
+### Những thứ production thật thường cần
+
+```txt
+Structured logging
+Health checks
+Database migration strategy
+Error monitoring
+Metrics
+Rate limiting
+CI/CD
+Separate worker process
+Secrets management
+```
+
+### Với project học này nên biết gì?
+
+Không cần làm hết ngay. Nhưng cần hiểu:
+
+```txt
+Docker Compose giúp chạy dependency local.
+Prisma migration giúp version database schema.
+Redis cache giúp giảm query DB.
+Queue giúp tách background work khỏi request.
+JWT guard giúp bảo vệ route.
+```
+
+### Tiêu chí hoàn thành
+
+- Bạn có thể giải thích kiến trúc project từ request vào tới database/cache/queue.
+- Bạn có thể tự debug lỗi thường gặp bằng log.
+- Bạn có thể clone project mới và dựng lại từ đầu.
+
 ## Lệnh hay dùng
 
 ### Docker
@@ -1013,5 +1572,14 @@ GET http://localhost:4000/posts?page=1&limit=10
 - [x] Auth register/login/JWT
 - [x] Posts CRUD
 - [x] Redis cache cho posts
-- [ ] BullMQ queue và worker
+- [x] BullMQ queue và worker
+- [x] Environment config
 - [ ] README production-style
+- [ ] Refactor nhẹ
+- [ ] Basic automated tests
+- [ ] Database seeding
+- [ ] Pagination/query nâng cao
+- [ ] Cache nâng cao
+- [ ] Queue nâng cao
+- [ ] Security cơ bản
+- [ ] Production thinking
