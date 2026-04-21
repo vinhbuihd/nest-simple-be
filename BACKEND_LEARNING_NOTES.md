@@ -1,16 +1,16 @@
 # Mini Blog API Learning Notes
 
-Ghi chu nay tong hop cac bai hoc da di qua khi xay Mini Blog API bang NestJS, PostgreSQL, Prisma, Redis va JWT. Muc tieu la giup ban xem lai "vi sao lam nhu vay", khong chi copy code.
+Ghi chú này tổng hợp các bài học đã đi qua khi xây Mini Blog API bằng NestJS, PostgreSQL, Prisma, Redis và JWT. Mục tiêu là giúp bạn xem lại "vì sao làm như vậy", không chỉ copy code.
 
-## Bai 1: NestJS Project Basics
+## Bài 1: NestJS Project Basics
 
-### Muc tieu
+### Mục tiêu
 
-- Hieu app NestJS chay tu dau.
-- Hieu 3 khai niem dau tien: Module, Controller, Service.
-- Tao endpoint `GET /health` de kiem tra app dang song.
+- Hiểu app NestJS chạy từ đâu.
+- Hiểu 3 khái niệm đầu tiên: Module, Controller, Service.
+- Tạo endpoint `GET /health` để kiểm tra app đang sống.
 
-### Luong xu ly co ban
+### Luồng xử lý cơ bản
 
 ```txt
 Client request
@@ -19,12 +19,12 @@ Client request
 -> Response
 ```
 
-### Vai tro cac file starter
+### Vai trò các file starter
 
-- `src/main.ts`: diem khoi dong app.
-- `src/app.module.ts`: module goc cua ung dung.
-- `src/app.controller.ts`: nhan HTTP request.
-- `src/app.service.ts`: chua logic don gian ma controller goi.
+- `src/main.ts`: điểm khởi động app.
+- `src/app.module.ts`: module gốc của ứng dụng.
+- `src/app.controller.ts`: nhận HTTP request.
+- `src/app.service.ts`: chứa logic đơn giản mà controller gọi.
 
 ### Module trong NestJS
 
@@ -38,25 +38,25 @@ Client request
 export class SomeModule {}
 ```
 
-- `imports`: module nay can dung module khac.
-- `controllers`: controller thuoc module nay, dung de nhan request HTTP.
-- `providers`: service/class ma NestJS se tao, quan ly va inject.
-- `exports`: provider nao duoc cho module khac dung.
+- `imports`: module này cần dùng module khác.
+- `controllers`: controller thuộc module này, dùng để nhận request HTTP.
+- `providers`: service/class mà NestJS sẽ tạo, quản lý và inject.
+- `exports`: provider nào được cho module khác dùng.
 
-### Cau de nho
+### Câu dễ nhớ
 
 ```txt
-Controller nhan request.
-Service xu ly logic.
-Module gom controller/service lai va quan ly dependency.
+Controller nhận request.
+Service xử lý logic.
+Module gom controller/service lại và quản lý dependency.
 ```
 
-## Bai 2: Docker PostgreSQL va Redis
+## Bài 2: Docker PostgreSQL và Redis
 
-### Muc tieu
+### Mục tiêu
 
-- Chay PostgreSQL va Redis local bang Docker Compose.
-- Hieu app backend ket noi toi service ben ngoai qua `.env`.
+- Chạy PostgreSQL và Redis local bằng Docker Compose.
+- Hiểu app backend kết nối tới service bên ngoài qua `.env`.
 
 ### File `docker-compose.yml`
 
@@ -86,7 +86,7 @@ volumes:
   postgres_data:
 ```
 
-### Cac lenh quan trong
+### Các lệnh quan trọng
 
 ```bash
 docker compose up -d
@@ -96,58 +96,58 @@ docker compose logs redis
 docker compose down
 ```
 
-### Y nghia `docker compose up -d`
+### Ý nghĩa `docker compose up -d`
 
-Lenh nay doc `docker-compose.yml`, tai image neu can, tao container va chay chung o che do nen.
+Lệnh này đọc `docker-compose.yml`, tải image nếu cần, tạo container và chạy chúng ở chế độ nền.
 
-Trong project nay:
+Trong project này:
 
 ```txt
 PostgreSQL: localhost:5432
 Redis:      localhost:6379
 ```
 
-### Loi thuong gap
+### Lỗi thường gặp
 
-Neu gap loi:
+Nếu gặp lỗi:
 
 ```txt
 open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified
 ```
 
-nghia la Docker Desktop/Docker Engine chua chay.
+nghĩa là Docker Desktop/Docker Engine chưa chạy.
 
-## Bai 3: Prisma ORM
+## Bài 3: Prisma ORM
 
-### Muc tieu
+### Mục tiêu
 
-- Dinh nghia database schema bang Prisma.
-- Tao `User` va `Post`.
-- Tao relation: 1 user co nhieu post.
-- Chay migration vao PostgreSQL.
+- Định nghĩa database schema bằng Prisma.
+- Tạo `User` và `Post`.
+- Tạo relation: 1 user có nhiều post.
+- Chạy migration vào PostgreSQL.
 
-### Cai package
+### Cài package
 
 ```bash
 yarn add @prisma/client
 yarn add -D prisma
 ```
 
-### Khoi tao Prisma
+### Khởi tạo Prisma
 
 ```bash
 yarn prisma init
 ```
 
-### Prisma 7 luu y
+### Prisma 7 lưu ý
 
-Voi Prisma 7, `schema.prisma` khong con khai bao:
+Với Prisma 7, `schema.prisma` không còn khai báo:
 
 ```prisma
 url = env("DATABASE_URL")
 ```
 
-Datasource chi con:
+Datasource chỉ còn:
 
 ```prisma
 datasource db {
@@ -155,7 +155,7 @@ datasource db {
 }
 ```
 
-Connection URL nam trong `prisma.config.ts`:
+Connection URL nằm trong `prisma.config.ts`:
 
 ```ts
 import 'dotenv/config';
@@ -172,7 +172,7 @@ export default defineConfig({
 });
 ```
 
-### Schema chinh
+### Schema chính
 
 ```prisma
 model User {
@@ -200,14 +200,14 @@ model Post {
 }
 ```
 
-### Chay migration
+### Chạy migration
 
 ```bash
 yarn prisma migrate dev --name init
 yarn prisma generate
 ```
 
-### Dieu can nho
+### Điều cần nhớ
 
 ```txt
 schema.prisma
@@ -217,14 +217,14 @@ schema.prisma
 -> NestJS services
 ```
 
-## Bai 4: PrismaService va UsersModule
+## Bài 4: PrismaService và UsersModule
 
-### Muc tieu
+### Mục tiêu
 
-- Dua Prisma vao NestJS dung cach.
-- Tao `PrismaService` dung chung.
-- Tao `UsersService` de thao tac bang users.
-- Khong tra password hash ra API response.
+- Đưa Prisma vào NestJS đúng cách.
+- Tạo `PrismaService` dùng chung.
+- Tạo `UsersService` để thao tác bảng users.
+- Không trả password hash ra API response.
 
 ### PrismaModule
 
@@ -236,11 +236,11 @@ schema.prisma
 export class PrismaModule {}
 ```
 
-`exports: [PrismaService]` cho phep module khac import `PrismaModule` va inject `PrismaService`.
+`exports: [PrismaService]` cho phép module khác import `PrismaModule` và inject `PrismaService`.
 
-### PrismaService voi Prisma 7
+### PrismaService với Prisma 7
 
-Voi Prisma 7, app runtime can adapter PostgreSQL:
+Với Prisma 7, app runtime cần adapter PostgreSQL:
 
 ```bash
 yarn add @prisma/adapter-pg pg
@@ -279,27 +279,27 @@ export class PrismaService
 }
 ```
 
-### Vi sao `this.prisma.user` va `this.prisma.post` ton tai?
+### Vì sao `this.prisma.user` và `this.prisma.post` tồn tại?
 
-`PrismaService extends PrismaClient`, ma `PrismaClient` duoc generate tu `schema.prisma`.
+`PrismaService extends PrismaClient`, mà `PrismaClient` được generate từ `schema.prisma`.
 
 ```txt
 model User -> prisma.user
 model Post -> prisma.post
 ```
 
-`@@map("users")` chi doi ten table trong database, khong doi ten property trong code.
+`@@map("users")` chỉ đổi tên table trong database, không đổi tên property trong code.
 
-## Bai 5: Auth Register/Login voi JWT
+## Bài 5: Auth Register/Login với JWT
 
-### Muc tieu
+### Mục tiêu
 
 - Register user.
-- Hash password bang bcrypt.
-- Login va tra JWT access token.
-- Tao JWT strategy va guard.
+- Hash password bằng bcrypt.
+- Login và trả JWT access token.
+- Tạo JWT strategy và guard.
 
-### Package can co
+### Package cần có
 
 ```bash
 yarn add @nestjs/config
@@ -324,13 +324,13 @@ app.useGlobalPipes(
 );
 ```
 
-- `whitelist`: loai field la.
-- `forbidNonWhitelisted`: neu client gui field la thi bao loi.
-- `transform`: convert query/body theo DTO khi co the.
+- `whitelist`: loại field lạ.
+- `forbidNonWhitelisted`: nếu client gửi field lạ thì báo lỗi.
+- `transform`: convert query/body theo DTO khi có thể.
 
-### DTO bat buoc nen dung `!`
+### DTO bắt buộc nên dùng `!`
 
-Voi DTO required fields:
+Với DTO required fields:
 
 ```ts
 export class RegisterDto {
@@ -343,7 +343,7 @@ export class RegisterDto {
 }
 ```
 
-Dau `!` noi voi TypeScript rang field nay se co gia tri luc runtime, thong qua request body.
+Dấu `!` nói với TypeScript rằng field này sẽ có giá trị lúc runtime, thông qua request body.
 
 ### JWT payload
 
@@ -354,17 +354,17 @@ const payload = {
 };
 ```
 
-`sub` la convention thuong dung de luu user id.
+`sub` là convention thường dùng để lưu user id.
 
 ### JwtStrategy
 
-Strategy doc token tu header:
+Strategy đọc token từ header:
 
 ```txt
 Authorization: Bearer <token>
 ```
 
-Sau khi verify, Nest/Passport gan user vao request.
+Sau khi verify, Nest/Passport gắn user vào request.
 
 ### JwtAuthGuard
 
@@ -373,17 +373,17 @@ Sau khi verify, Nest/Passport gan user vao request.
 export class JwtAuthGuard extends AuthGuard('jwt') {}
 ```
 
-Dung tren route can dang nhap:
+Dùng trên route cần đăng nhập:
 
 ```ts
 @UseGuards(JwtAuthGuard)
 ```
 
-## Bai 6: Posts CRUD va Protected Routes
+## Bài 6: Posts CRUD và Protected Routes
 
-### Muc tieu
+### Mục tiêu
 
-Tao API:
+Tạo API:
 
 ```txt
 POST   /posts
@@ -393,17 +393,17 @@ PATCH  /posts/:id
 DELETE /posts/:id
 ```
 
-Quyen truy cap:
+Quyền truy cập:
 
 ```txt
 GET list/detail: public
-POST/PATCH/DELETE: can JWT
-PATCH/DELETE: chi author duoc sua/xoa
+POST/PATCH/DELETE: cần JWT
+PATCH/DELETE: chỉ author được sửa/xóa
 ```
 
 ### CurrentUser decorator
 
-Dung de lay `request.user` sau khi JWT guard verify token:
+Dùng để lấy `request.user` sau khi JWT guard verify token:
 
 ```ts
 export const CurrentUser = createParamDecorator(
@@ -415,7 +415,7 @@ export const CurrentUser = createParamDecorator(
 );
 ```
 
-Nen import type:
+Nên import type:
 
 ```ts
 import type { AuthUser } from '../../auth/strategies/jwt.strategy';
@@ -440,7 +440,7 @@ export class ListPostsQueryDto {
 }
 ```
 
-### Include author nhung khong lo password
+### Include author nhưng không lộ password
 
 ```ts
 include: {
@@ -453,11 +453,11 @@ include: {
 }
 ```
 
-Y nghia:
+Ý nghĩa:
 
 ```txt
-Lay post kem author,
-nhung chi lay id va email cua author.
+Lấy post kèm author,
+nhưng chỉ lấy id và email của author.
 ```
 
 ### Pagination trong service
@@ -468,7 +468,7 @@ const limit = query.limit;
 const skip = (page - 1) * limit;
 ```
 
-Lay data va dem tong so record:
+Lấy data và đếm tổng số record:
 
 ```ts
 const [items, total] = await this.prisma.$transaction([
@@ -490,17 +490,17 @@ return {
 };
 ```
 
-### Loi get one bi 500
+### Lỗi get one bị 500
 
-Neu log co:
+Nếu log có:
 
 ```txt
 where: { id: undefined }
 ```
 
-thi route param dang lay sai.
+thì route param đang lấy sai.
 
-Dung:
+Đúng:
 
 ```ts
 @Get(':id')
@@ -509,23 +509,23 @@ findOne(@Param('id') id: string) {
 }
 ```
 
-Sai thuong gap:
+Sai thường gặp:
 
 ```ts
 @Param('postId')
 ```
 
-trong khi route la `:id`.
+trong khi route là `:id`.
 
-## Bai 7: Redis Cache cho GET /posts
+## Bài 7: Redis Cache cho GET /posts
 
-### Muc tieu
+### Mục tiêu
 
 - Cache `GET /posts?page=1&limit=10`.
-- TTL = 60 giay.
+- TTL = 60 giây.
 - Invalidate cache khi create/update/delete post.
 
-### Cai package
+### Cài package
 
 ```bash
 yarn add ioredis
@@ -587,7 +587,7 @@ private getPostsCacheKey(page: number, limit: number): string {
 }
 ```
 
-Phai co `page` va `limit` trong key vi moi trang la mot response khac nhau.
+Phải có `page` và `limit` trong key vì mỗi trang là một response khác nhau.
 
 ### Invalidate cache
 
@@ -597,25 +597,336 @@ private async invalidatePostsCache(): Promise<void> {
 }
 ```
 
-Sau khi create/update/delete, goi:
+Sau khi create/update/delete, gọi:
 
 ```ts
 await this.invalidatePostsCache();
 ```
 
-### Luong cache
+### Luồng cache
 
 ```txt
 GET /posts
--> tao cache key
+-> tạo cache key
 -> check Redis
--> neu co: return cache
--> neu khong: query DB
+-> nếu có: return cache
+-> nếu không: query DB
 -> set Redis TTL 60s
 -> return result
 ```
 
-## Lenh hay dung
+## Bài 8: BullMQ Queue và Worker
+
+### Mục tiêu
+
+- Hiểu queue dùng để làm việc nền.
+- Khi tạo post thành công, đẩy job `send-email` vào queue.
+- Worker xử lý job và log:
+
+```txt
+Send email for post: {postId}
+```
+
+### Vì sao cần queue?
+
+Nếu một request phải làm việc chậm, ví dụ gửi email, tạo PDF, resize image, gọi API bên ngoài, ta không nên bắt client chờ ngay trong request.
+
+Thay vào đó:
+
+```txt
+POST /posts
+-> tạo post trong database
+-> add job vào queue
+-> response về client
+
+Worker
+-> lấy job từ queue
+-> xử lý gửi email ở background
+```
+
+### Cài package
+
+```bash
+yarn add @nestjs/bullmq bullmq
+```
+
+BullMQ dùng Redis làm backend để lưu job.
+
+### Cấu trúc folder
+
+```txt
+src/queue/
+  queue.module.ts
+  posts-queue.producer.ts
+  send-email.consumer.ts
+```
+
+### Tên queue và job
+
+Nên đặt constant để tránh gõ sai string:
+
+```ts
+export const POSTS_QUEUE = 'posts';
+export const SEND_EMAIL_JOB = 'send-email';
+```
+
+Có thể tạo trong file:
+
+```txt
+src/queue/queue.constants.ts
+```
+
+### QueueModule
+
+```ts
+import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
+import { PostsQueueProducer } from './posts-queue.producer';
+import { SendEmailConsumer } from './send-email.consumer';
+import { POSTS_QUEUE } from './queue.constants';
+
+@Module({
+  imports: [
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST ?? 'localhost',
+        port: Number(process.env.REDIS_PORT ?? 6379),
+      },
+    }),
+    BullModule.registerQueue({
+      name: POSTS_QUEUE,
+    }),
+  ],
+  providers: [PostsQueueProducer, SendEmailConsumer],
+  exports: [PostsQueueProducer],
+})
+export class QueueModule {}
+```
+
+Ý nghĩa:
+
+- `BullModule.forRoot`: cấu hình kết nối Redis cho BullMQ.
+- `BullModule.registerQueue`: đăng ký queue tên `posts`.
+- `PostsQueueProducer`: service add job.
+- `SendEmailConsumer`: worker xử lý job.
+- `exports`: cho module khác inject `PostsQueueProducer`.
+
+### Producer
+
+```ts
+import { InjectQueue } from '@nestjs/bullmq';
+import { Injectable } from '@nestjs/common';
+import { Queue } from 'bullmq';
+import { POSTS_QUEUE, SEND_EMAIL_JOB } from './queue.constants';
+
+type SendEmailJobData = {
+  postId: string;
+};
+
+@Injectable()
+export class PostsQueueProducer {
+  constructor(
+    @InjectQueue(POSTS_QUEUE)
+    private readonly postsQueue: Queue<SendEmailJobData>,
+  ) {}
+
+  async addSendEmailJob(postId: string): Promise<void> {
+    await this.postsQueue.add(SEND_EMAIL_JOB, {
+      postId,
+    });
+  }
+}
+```
+
+Producer là người "đẩy việc" vào queue.
+
+### Consumer
+
+```ts
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
+import { Job } from 'bullmq';
+import { POSTS_QUEUE, SEND_EMAIL_JOB } from './queue.constants';
+
+type SendEmailJobData = {
+  postId: string;
+};
+
+@Processor(POSTS_QUEUE)
+export class SendEmailConsumer extends WorkerHost {
+  private readonly logger = new Logger(SendEmailConsumer.name);
+
+  async process(job: Job<SendEmailJobData>): Promise<void> {
+    if (job.name !== SEND_EMAIL_JOB) {
+      return;
+    }
+
+    this.logger.log(`Send email for post: ${job.data.postId}`);
+  }
+}
+```
+
+Consumer là worker xử lý job ở background.
+
+### Nối QueueModule vào PostsModule
+
+Trong `PostsModule`, thêm:
+
+```ts
+imports: [PrismaModule, CacheModule, QueueModule]
+```
+
+Sau đó `PostsService` có thể inject:
+
+```ts
+constructor(
+  private readonly prisma: PrismaService,
+  private readonly cacheService: CacheService,
+  private readonly postsQueueProducer: PostsQueueProducer,
+) {}
+```
+
+### Add job khi tạo post
+
+Sau khi tạo post thành công:
+
+```ts
+const post = await this.prisma.post.create({
+  // ...
+});
+
+await this.invalidatePostsCache();
+await this.postsQueueProducer.addSendEmailJob(post.id);
+
+return post;
+```
+
+Thứ tự nên là:
+
+```txt
+1. Tạo post thành công
+2. Xóa cache list posts
+3. Add background job
+4. Return response
+```
+
+### Test queue
+
+Cần đảm bảo Redis đang chạy:
+
+```bash
+docker compose ps
+```
+
+Chạy app:
+
+```bash
+yarn start:dev
+```
+
+Tạo post:
+
+```http
+POST http://localhost:4000/posts
+Authorization: Bearer YOUR_ACCESS_TOKEN
+Content-Type: application/json
+
+{
+  "title": "Post with queue",
+  "content": "This post should trigger a background email job."
+}
+```
+
+Nếu thành công, terminal NestJS sẽ có log:
+
+```txt
+Send email for post: <post-id>
+```
+
+### Điều cần nhớ
+
+```txt
+Producer add job.
+Queue lưu job trong Redis.
+Consumer/worker xử lý job.
+Request không phải chờ việc nền hoàn thành.
+```
+
+### Giải thích lại bằng ví dụ đời thường
+
+Hãy tưởng tượng `POST /posts` là quầy tiếp nhận hồ sơ.
+
+Nếu nhân viên vừa nhận hồ sơ vừa phải gửi email ngay tại quầy, khách phải đứng chờ lâu. Backend cũng vậy: nếu request vừa tạo post vừa gửi email thật, response sẽ chậm và dễ lỗi nếu email service chập chờn.
+
+Queue giải quyết bằng cách tách việc:
+
+```txt
+Controller/Service:
+  Tôi tạo post xong rồi.
+  Tôi ghi một phiếu việc: "send-email cho postId này".
+  Tôi trả response cho client trước.
+
+Worker:
+  Tôi lấy phiếu việc từ queue.
+  Tôi xử lý gửi email ở background.
+```
+
+Trong project này, "phiếu việc" là job:
+
+```ts
+await this.postsQueue.add(SEND_EMAIL_JOB, {
+  postId,
+});
+```
+
+Redis là nơi giữ danh sách job. BullMQ là thư viện giúp add job, lấy job, retry, quản lý trạng thái job. Consumer là worker nhận job và xử lý.
+
+### Producer, Queue, Consumer là gì?
+
+```txt
+Producer = người tạo việc
+Queue    = hàng đợi việc
+Consumer = người xử lý việc
+```
+
+Áp vào code:
+
+```txt
+PostsService
+-> gọi PostsQueueProducer
+-> add job vào BullMQ queue
+-> Redis lưu job
+-> SendEmailConsumer nhận job
+-> log Send email for post: {postId}
+```
+
+### Vì sao `process` phải là async?
+
+`WorkerHost` của `@nestjs/bullmq` định nghĩa method `process` phải trả về `Promise`.
+
+Nên consumer cần dạng:
+
+```ts
+async process(job: Job<SendEmailJobData>): Promise<void> {
+  // xử lý job
+}
+```
+
+Nhưng ESLint có rule: nếu hàm `async` thì bên trong nên có `await`.
+
+Ở bài học này worker chỉ log, chưa có thao tác async thật, nên có thể tạm dùng:
+
+```ts
+await Promise.resolve();
+```
+
+Sau này khi gửi email thật, dòng đó sẽ được thay bằng:
+
+```ts
+await this.mailService.sendPostCreatedEmail(job.data.postId);
+```
+
+## Lệnh hay dùng
 
 ### Docker
 
@@ -635,13 +946,13 @@ yarn prisma studio
 
 ### NestJS
 
-Neu PowerShell chan `yarn.ps1`, co the build bang:
+Nếu PowerShell chặn `yarn.ps1`, có thể build bằng:
 
 ```powershell
 .\node_modules\.bin\nest.cmd build
 ```
 
-Chay dev:
+Chạy dev:
 
 ```bash
 yarn start:dev
@@ -692,15 +1003,15 @@ Get posts:
 GET http://localhost:4000/posts?page=1&limit=10
 ```
 
-## Checklist hien tai
+## Checklist hiện tại
 
 - [x] NestJS basics
-- [x] Docker PostgreSQL va Redis
-- [x] Prisma schema va migration
+- [x] Docker PostgreSQL và Redis
+- [x] Prisma schema và migration
 - [x] PrismaService
 - [x] UsersService
 - [x] Auth register/login/JWT
 - [x] Posts CRUD
-- [ ] Redis cache cho posts
-- [ ] BullMQ queue va worker
+- [x] Redis cache cho posts
+- [ ] BullMQ queue và worker
 - [ ] README production-style

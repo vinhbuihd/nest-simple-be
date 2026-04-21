@@ -8,12 +8,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ListPostsQueryDto } from './dto/list-posts-query.dto';
 import { CacheService } from '../cache/cache.service';
+import { PostsQueueProducer } from '../queue/posts-queue.producer';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cacheService: CacheService,
+    private readonly postsQueueProducer: PostsQueueProducer,
   ) {}
 
   private getPostsCacheKey(page: number, limit: number): string {
@@ -42,6 +44,7 @@ export class PostsService {
     });
 
     await this.invalidatePostsCache();
+    await this.postsQueueProducer.addSendEmailJob(post.id);
 
     return post;
   }
