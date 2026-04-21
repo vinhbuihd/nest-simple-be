@@ -7,13 +7,25 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { ListPostsQueryDto } from './dto/list-posts-query.dto';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cacheService: CacheService,
+  ) {}
+
+  private getPostsCacheKey(page: number, limit: number): string {
+    return `posts:list:page=${page}:limit=${limit}`;
+  }
+
+  private async invalidatePostsCache(): Promise<void> {
+    await this.cacheService.delByPattern('posts:list:*');
+  }
 
   async create(authorId: string, createPostDto: CreatePostDto) {
-    return this.prisma.post.create({
+    const post = await this.prisma.post.create({
       data: {
         title: createPostDto.title,
         content: createPostDto.content,
@@ -28,6 +40,10 @@ export class PostsService {
         },
       },
     });
+
+    await this.invalidatePostsCache();
+
+    return post;
   }
 
   async update(id: string, authorId: string, updatePostDto: UpdatePostDto) {
@@ -40,7 +56,7 @@ export class PostsService {
       throw new ForbiddenException('You can only update your own posts');
     }
 
-    return this.prisma.post.update({
+    const updatedPost = await this.prisma.post.update({
       where: { id },
       data: updatePostDto,
       include: {
@@ -52,11 +68,21 @@ export class PostsService {
         },
       },
     });
+
+    await this.invalidatePostsCache();
+
+    return updatedPost;
   }
 
   async findAll(query: ListPostsQueryDto) {
     const page = query.page;
     const limit = query.limit;
+
+    const cacheKey = this.getPostsCacheKey(page, limit);
+    const cachedPosts = await this.cacheService.get(cacheKey);
+
+    if (cachedPosts) return cachedPosts;
+
     const skip = (page - 1) * limit;
 
     const [items, total] = await this.prisma.$transaction([
@@ -77,7 +103,18 @@ export class PostsService {
       this.prisma.post.count(),
     ]);
 
-    return { items, meta: { total, page, limit } };
+    const result = {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+      },
+    };
+
+    await this.cacheService.set(cacheKey, result, 60); // Cache for 60 seconds
+
+    return result;
   }
 
   async findOne(id: string) {
@@ -112,6 +149,8 @@ export class PostsService {
     await this.prisma.post.delete({
       where: { id },
     });
+
+    await this.invalidatePostsCache();
 
     return {
       deleted: true,
