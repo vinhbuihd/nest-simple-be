@@ -16,9 +16,9 @@ export class UsersService {
   }
 
   async createUser(email: string, hashedPassword: string) {
-    const exitedUser = await this.findByEmail(email);
+    const existingUser = await this.findByEmail(email);
 
-    if (exitedUser) {
+    if (existingUser) {
       throw new ConflictException('Email already exists');
     }
 
