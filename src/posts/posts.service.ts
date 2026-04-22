@@ -9,6 +9,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { ListPostsQueryDto } from './dto/list-posts-query.dto';
 import { CacheService } from '../cache/cache.service';
 import { PostsQueueProducer } from '../queue/posts-queue.producer';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostsService {
@@ -18,8 +19,11 @@ export class PostsService {
     private readonly postsQueueProducer: PostsQueueProducer,
   ) {}
 
-  private getPostsCacheKey(page: number, limit: number): string {
-    return `posts:list:page=${page}:limit=${limit}`;
+  private getPostsCacheKey(query: ListPostsQueryDto): string {
+    const search = query.search ?? '';
+    const sortBy = query.sortBy;
+    const sortOrder = query.sortOrder;
+    return `posts:list:page=${query.page}:limit=${query.limit}:search=${search}:sortBy=${sortBy}:sortOrder=${sortOrder}`;
   }
 
   private async invalidatePostsCache(): Promise<void> {
@@ -81,18 +85,32 @@ export class PostsService {
     const page = query.page;
     const limit = query.limit;
 
-    const cacheKey = this.getPostsCacheKey(page, limit);
+    const cacheKey = this.getPostsCacheKey(query);
     const cachedPosts = await this.cacheService.get(cacheKey);
 
     if (cachedPosts) return cachedPosts;
 
     const skip = (page - 1) * limit;
 
+    const where: Prisma.PostWhereInput = query.search
+      ? {
+          OR: [
+            { title: { contains: query.search, mode: 'insensitive' } },
+            { content: { contains: query.search, mode: 'insensitive' } },
+          ],
+        }
+      : {};
+
+    const orderBy: Prisma.PostOrderByWithRelationInput = {
+      [query.sortBy]: query.sortOrder,
+    };
+
     const [items, total] = await this.prisma.$transaction([
       this.prisma.post.findMany({
+        where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         include: {
           author: {
             select: {
@@ -103,7 +121,7 @@ export class PostsService {
         },
       }),
 
-      this.prisma.post.count(),
+      this.prisma.post.count({ where }),
     ]);
 
     const result = {
