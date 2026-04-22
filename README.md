@@ -98,7 +98,7 @@ yarn prisma generate
 Open Prisma Studio:
 
 ```bash
- yarn prisma studio
+yarn prisma studio
 ```
 
 ## Start Application
