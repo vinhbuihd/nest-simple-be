@@ -1,4 +1,4 @@
-# Mini Blog API Learning Notes
+﻿# Mini Blog API Learning Notes
 
 ## Menu học tập
 
@@ -13,9 +13,9 @@
 | [Bài 7](#bai-7) | Redis Cache cho GET /posts | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
 | [Bài 8](#bai-8) | BullMQ Queue và Worker | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
 | [Bài 9](#bai-9) | Environment Config và App Configuration | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
-| [Bài 10](#bai-10) | Error Handling và Response Shape | Chưa học |
-| [Bài 11](#bai-11) | API Testing bằng Postman hoặc cURL | Chưa học |
-| [Bài 12](#bai-12) | README Production-Style | Chưa học |
+| [Bài 10](#bai-10) | Error Handling và Response Shape | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 11](#bai-11) | API Testing bằng Postman hoặc cURL | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 12](#bai-12) | README Production-Style | <span style="color: #ca8a04; font-weight: 600;">Đang học</span> |
 | [Bài 13](#bai-13) | Refactor nhẹ cho sạch code | Chưa học |
 | [Bài 14](#bai-14) | Basic Automated Tests | Chưa học |
 | [Bài 15](#bai-15) | Database Seeding | Chưa học |
@@ -1574,6 +1574,8 @@ GET http://localhost:4000/posts?page=1&limit=10
 - [x] Redis cache cho posts
 - [x] BullMQ queue và worker
 - [x] Environment config
+- [x] Error handling
+- [x] API testing bằng Postman hoặc cURL
 - [ ] README production-style
 - [ ] Refactor nhẹ
 - [ ] Basic automated tests
@@ -1583,3 +1585,6 @@ GET http://localhost:4000/posts?page=1&limit=10
 - [ ] Queue nâng cao
 - [ ] Security cơ bản
 - [ ] Production thinking
+
+
+
