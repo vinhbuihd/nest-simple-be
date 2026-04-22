@@ -17,9 +17,9 @@
 | [Bài 11](#bai-11) | API Testing bằng Postman hoặc cURL | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
 | [Bài 12](#bai-12) | README Production-Style | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
 | [Bài 13](#bai-13) | Refactor nhẹ cho sạch code | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
-| [Bài 14](#bai-14) | Basic Automated Tests | <span style="color: #ca8a04; font-weight: 600;">Đang học</span> |
-| [Bài 15](#bai-15) | Database Seeding | Chưa học |
-| [Bài 16](#bai-16) | Pagination nâng cao và Query Options | Chưa học |
+| [Bài 14](#bai-14) | Basic Automated Tests | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 15](#bai-15) | Database Seeding | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 16](#bai-16) | Pagination nâng cao và Query Options | <span style="color: #ca8a04; font-weight: 600;">Đang học</span> |
 | [Bài 17](#bai-17) | Cache nâng cao | Chưa học |
 | [Bài 18](#bai-18) | Queue nâng cao | Chưa học |
 | [Bài 19](#bai-19) | Security cơ bản | Chưa học |
@@ -1292,6 +1292,29 @@ Seed sẽ:
 3. Tạo posts demo
 ```
 
+### Lưu ý Prisma 7
+
+Với Prisma 7, seed command nên cấu hình trong `prisma.config.ts`, không cấu hình trong `package.json` kiểu cũ.
+
+```ts
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: {
+    path: 'prisma/migrations',
+    seed: 'ts-node prisma/seed.ts',
+  },
+  datasource: {
+    url: env('DATABASE_URL'),
+  },
+});
+```
+
+Sau đó chạy:
+
+```bash
+yarn prisma db seed
+```
+
 ### Tiêu chí hoàn thành
 
 - Chạy một lệnh seed có dữ liệu mẫu.
@@ -1578,13 +1601,15 @@ GET http://localhost:4000/posts?page=1&limit=10
 - [x] API testing bằng Postman hoặc cURL
 - [x] README production-style
 - [x] Refactor nhẹ
-- [ ] Basic automated tests
-- [ ] Database seeding
+- [x] Basic automated tests
+- [x] Database seeding
 - [ ] Pagination/query nâng cao
 - [ ] Cache nâng cao
 - [ ] Queue nâng cao
 - [ ] Security cơ bản
 - [ ] Production thinking
+
+
 
 
 
