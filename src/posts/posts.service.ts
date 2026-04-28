@@ -26,8 +26,16 @@ export class PostsService {
     return `posts:list:page=${query.page}:limit=${query.limit}:search=${search}:sortBy=${sortBy}:sortOrder=${sortOrder}`;
   }
 
+  private getPostDetailCacheKey(postId: string): string {
+    return `posts:detail:${postId}`;
+  }
+
   private async invalidatePostsCache(): Promise<void> {
     await this.cacheService.delByPattern('posts:list:*');
+  }
+
+  private async invalidatePostDetailCache(postId: string): Promise<void> {
+    await this.cacheService.del(this.getPostDetailCacheKey(postId));
   }
 
   async create(authorId: string, createPostDto: CreatePostDto) {
@@ -77,6 +85,7 @@ export class PostsService {
     });
 
     await this.invalidatePostsCache();
+    await this.invalidatePostDetailCache(id);
 
     return updatedPost;
   }
@@ -139,6 +148,14 @@ export class PostsService {
   }
 
   async findOne(id: string) {
+    const cacheKey = this.getPostDetailCacheKey(id);
+    const cachePost = await this.cacheService.get(cacheKey);
+    if (cachePost) {
+      console.log('Return post detail from cache');
+
+      return cachePost;
+    }
+
     const post = await this.prisma.post.findUnique({
       where: { id },
       include: {
@@ -154,6 +171,8 @@ export class PostsService {
     if (!post) {
       throw new NotFoundException('Post not found');
     }
+
+    await this.cacheService.set(cacheKey, post, 60); // Cache for 60 seconds
 
     return post;
   }
@@ -172,6 +191,7 @@ export class PostsService {
     });
 
     await this.invalidatePostsCache();
+    await this.invalidatePostDetailCache(id);
 
     return {
       deleted: true,

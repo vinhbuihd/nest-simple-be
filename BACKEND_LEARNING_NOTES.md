@@ -19,8 +19,8 @@
 | [Bài 13](#bai-13) | Refactor nhẹ cho sạch code | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
 | [Bài 14](#bai-14) | Basic Automated Tests | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
 | [Bài 15](#bai-15) | Database Seeding | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
-| [Bài 16](#bai-16) | Pagination nâng cao và Query Options | <span style="color: #ca8a04; font-weight: 600;">Đang học</span> |
-| [Bài 17](#bai-17) | Cache nâng cao | Chưa học |
+| [Bài 16](#bai-16) | Pagination nâng cao và Query Options | <span style="color: #15803d; font-weight: 600;">Đã học</span> |
+| [Bài 17](#bai-17) | Cache nâng cao | <span style="color: #ca8a04; font-weight: 600;">Đang học</span> |
 | [Bài 18](#bai-18) | Queue nâng cao | Chưa học |
 | [Bài 19](#bai-19) | Security cơ bản | Chưa học |
 | [Bài 20](#bai-20) | Production Thinking | Chưa học |
@@ -1603,11 +1603,12 @@ GET http://localhost:4000/posts?page=1&limit=10
 - [x] Refactor nhẹ
 - [x] Basic automated tests
 - [x] Database seeding
-- [ ] Pagination/query nâng cao
+- [x] Pagination/query nâng cao
 - [ ] Cache nâng cao
 - [ ] Queue nâng cao
 - [ ] Security cơ bản
 - [ ] Production thinking
+
 
 
 
