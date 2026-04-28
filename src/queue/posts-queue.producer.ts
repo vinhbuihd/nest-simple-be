@@ -15,6 +15,17 @@ export class PostsQueueProducer {
   ) {}
 
   async addSendEmailJob(postId: string): Promise<void> {
-    await this.postsQueue.add(SEND_EMAIL_JOB, { postId });
+    await this.postsQueue.add(
+      SEND_EMAIL_JOB,
+      { postId },
+      {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 1000 },
+        delay: 2000,
+        jobId: `send-email-post-${postId}`,
+        removeOnComplete: 100,
+        removeOnFail: 100,
+      },
+    );
   }
 }
